@@ -1,0 +1,1099 @@
+<html lang="te"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#E8650A">
+<title>LocalLink</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#111;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.app{width:100%;max-width:430px;height:100dvh;margin:0 auto;background:#F7F4EF;display:flex;flex-direction:column;position:relative;overflow:hidden}
+
+/* SCREENS */
+.screen{display:none;flex-direction:column;flex:1;overflow:hidden}
+.screen.active{display:flex}
+.scroll{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
+.scroll::-webkit-scrollbar{display:none}
+
+/* ── HOME HEADER ── */
+.home-hdr{background:linear-gradient(145deg,#C94F06,#E8650A,#F5900A);padding:env(safe-area-inset-top,14px) 18px 28px;flex-shrink:0;position:relative;overflow:hidden}
+.home-hdr::after{content:'';position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.06);top:-50px;right:-50px;pointer-events:none}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:13px}
+.loc{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.loc-dot{width:7px;height:7px;background:#FFD87A;border-radius:50%}
+.loc-txt{font-size:11px;color:rgba(255,255,255,.85);font-weight:700}
+.greeting{font-size:22px;font-weight:900;color:#fff;line-height:1.2}
+.greeting em{color:#FFD87A;font-style:normal}
+.sub-g{font-size:12px;color:rgba(255,255,255,.72);margin-top:3px;font-weight:600}
+.notif{width:40px;height:40px;background:rgba(255,255,255,.2);border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer}
+.srch{background:#fff;border-radius:14px;display:flex;align-items:center;gap:9px;padding:11px 14px;cursor:pointer;position:relative;z-index:1;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.srch-ph{font-size:13px;color:#BBB;font-weight:600;flex:1}
+
+/* PROMO */
+.promo{margin:15px 15px 0;background:linear-gradient(135deg,#0F6E56,#1D9E75);border-radius:18px;padding:15px 16px;display:flex;justify-content:space-between;align-items:center}
+.promo-t{color:#fff;font-size:14px;font-weight:900}
+.promo-s{color:rgba(255,255,255,.78);font-size:11px;margin-top:2px;font-weight:600}
+.promo-b{background:#FFD87A;color:#0F6E56;border-radius:11px;padding:7px 13px;font-size:14px;font-weight:900}
+
+/* SECTION HEADER */
+.sec{display:flex;justify-content:space-between;align-items:center;padding:0 15px;margin:18px 0 10px}
+.sec-t{font-size:16px;font-weight:800;color:#1A1A2E}
+.see-all{font-size:12px;color:#E8650A;font-weight:800;cursor:pointer;border:none;background:none;font-family:inherit}
+
+/* CAT GRID */
+.cg{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;padding:0 15px}
+.ci{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer}
+.ci:active{opacity:.7}
+.ci-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:25px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.ci-lbl{font-size:10px;font-weight:800;color:#666;text-align:center;line-height:1.3}
+
+/* PROVIDER CARD */
+.pl{display:flex;flex-direction:column;gap:9px;padding:0 15px}
+.pc{background:#fff;border-radius:17px;padding:13px;display:flex;gap:11px;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.06);cursor:pointer;border:.5px solid rgba(0,0,0,.04)}
+.pc:active{transform:scale(.98)}
+.pav{width:52px;height:52px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.pn{font-weight:800;font-size:14px;color:#1A1A2E}
+.ps{font-size:11px;color:#E8650A;font-weight:700;margin-top:1px}
+.pm{display:flex;gap:6px;margin-top:5px;align-items:center}
+.adot{width:7px;height:7px;border-radius:50%;background:#2ECC71;flex-shrink:0}
+.rt{font-size:11px;color:#F5900A;font-weight:800}
+.ds{font-size:11px;color:#999;font-weight:700}
+.bk{background:#E8650A;color:#fff;border-radius:10px;padding:8px 13px;font-size:12px;font-weight:800;border:none;cursor:pointer;font-family:inherit;flex-shrink:0}
+.bk:active{background:#C94F06}
+
+/* SCREEN HEADER */
+.sh{background:#fff;padding:13px 15px;display:flex;align-items:center;gap:11px;box-shadow:0 1px 8px rgba(0,0,0,.06);flex-shrink:0;position:sticky;top:0;z-index:10}
+.bk2{width:37px;height:37px;border-radius:11px;background:#F7F4EF;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;border:none;flex-shrink:0}
+.sh-t{font-size:17px;font-weight:800;color:#1A1A2E}
+.sh-s{font-size:11px;color:#999;font-weight:700}
+
+/* ALL CATS */
+.acg{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:13px}
+.acc{background:#fff;border-radius:15px;padding:15px 7px 11px;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 2px 9px rgba(0,0,0,.06);cursor:pointer;border:.5px solid rgba(0,0,0,.04)}
+.acc:active{transform:scale(.95)}
+.aci{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:23px}
+.acn{font-size:10px;font-weight:800;color:#555;text-align:center;line-height:1.3}
+.acc-cnt{font-size:9px;font-weight:700;color:#E8650A}
+
+/* CHIPS */
+.chips{display:flex;gap:7px;padding:9px 15px;overflow-x:auto;background:#fff;flex-shrink:0}
+.chips::-webkit-scrollbar{display:none}
+.chip{padding:6px 13px;border-radius:99px;font-size:12px;font-weight:800;white-space:nowrap;cursor:pointer;border:1.5px solid #E8650A;background:transparent;color:#E8650A;font-family:inherit}
+.chip.on{background:#E8650A;color:#fff}
+
+/* BOOKING HDR */
+.bh{background:linear-gradient(145deg,#C94F06,#E8650A);padding:env(safe-area-inset-top,12px) 15px 42px;flex-shrink:0}
+.bh-row{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.bh .bk2{background:rgba(255,255,255,.2);color:#fff}
+.bh-lbl{color:#fff;font-size:13px;font-weight:800;opacity:.9}
+
+/* PROFILE CARD */
+.prfc{background:#fff;border-radius:22px;margin:-28px 13px 0;padding:17px;box-shadow:0 8px 30px rgba(0,0,0,.12);position:relative;z-index:1}
+.bar{display:flex;gap:13px;align-items:center;margin-bottom:13px}
+.ba{width:66px;height:66px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0}
+.bn{font-size:19px;font-weight:900;color:#1A1A2E}
+.bsk{font-size:13px;color:#E8650A;font-weight:700;margin-top:2px}
+.bm{display:flex;gap:9px;margin-top:4px}
+.bm span{font-size:11px;color:#999;font-weight:700}
+.sr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin:11px 0}
+.sb{background:#F7F4EF;border-radius:13px;padding:11px 7px;text-align:center}
+.sn{font-size:17px;font-weight:900;color:#E8650A}
+.sl{font-size:9px;color:#999;font-weight:700;margin-top:2px;text-transform:uppercase;letter-spacing:.3px}
+.ctb{background:#F7F4EF;border-radius:13px;padding:13px;margin-bottom:12px}
+.ctl{font-size:10px;font-weight:800;color:#999;margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px}
+.ctp{font-size:14px;font-weight:800;color:#1A1A2E;margin-bottom:5px}
+.ctw{font-size:12px;font-weight:700;color:#2ECC71}
+
+/* REVIEWS */
+.rvc{background:#fff;border-radius:17px;margin:11px 13px;padding:15px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.rvt{font-size:10px;font-weight:800;color:#999;margin-bottom:11px;text-transform:uppercase;letter-spacing:.5px}
+.rvi{display:flex;gap:9px;align-items:flex-start;margin-bottom:11px}
+.rvi:last-child{margin-bottom:0}
+.rva{width:37px;height:37px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.rvn{font-size:12px;font-weight:800;color:#1A1A2E}
+.rvs{color:#F5900A;font-size:11px}
+.rvx{font-size:11px;color:#888;margin-top:2px;font-weight:600;line-height:1.4}
+
+/* BOTTOM ACTIONS */
+.bta{padding:11px 15px env(safe-area-inset-bottom,22px);background:#fff;box-shadow:0 -4px 18px rgba(0,0,0,.08);display:flex;gap:10px;flex-shrink:0}
+.wab{flex:1;background:transparent;color:#2ECC71;border:2px solid #2ECC71;border-radius:13px;padding:13px 9px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px}
+.wab:active{background:#f0fff4}
+.cab{flex:1;background:#E8650A;color:#fff;border:none;border-radius:13px;padding:13px 9px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px}
+.cab:active{background:#C94F06}
+
+/* BOTTOM NAV */
+.bn-bar{position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:.5px solid rgba(0,0,0,.08);display:flex;padding:9px 0 env(safe-area-inset-bottom,14px);z-index:100;box-shadow:0 -3px 16px rgba(0,0,0,.06)}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:3px 0}
+.ni-ic{font-size:21px}
+.ni-lb{font-size:10px;font-weight:800;color:#BBB}
+.ni.on .ni-lb{color:#E8650A}
+.ni-dot{width:4px;height:4px;background:#E8650A;border-radius:50%;display:none}
+.ni.on .ni-dot{display:block}
+
+/* ══════════════════════════════
+   ADMIN PANEL
+══════════════════════════════ */
+.adm-hdr{background:linear-gradient(135deg,#1A1A2E,#2D2D5E);padding:env(safe-area-inset-top,14px) 16px 20px;flex-shrink:0}
+.adm-title{color:#FFD87A;font-size:20px;font-weight:900;margin-bottom:2px}
+.adm-sub{color:rgba(255,255,255,.6);font-size:12px;font-weight:600}
+
+.adm-tabs{display:flex;background:#fff;border-bottom:1.5px solid #EEE;flex-shrink:0}
+.adm-tab{flex:1;padding:12px 8px;font-size:13px;font-weight:800;color:#999;border:none;background:transparent;font-family:inherit;cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1.5px}
+.adm-tab.on{color:#E8650A;border-bottom-color:#E8650A}
+
+.adm-body{flex:1;overflow-y:auto;padding:15px}
+.adm-body::-webkit-scrollbar{display:none}
+
+/* FORM */
+.form-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.form-title{font-size:15px;font-weight:800;color:#1A1A2E;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.form-row{margin-bottom:12px}
+.form-label{font-size:11px;font-weight:800;color:#888;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;display:block}
+.form-input{width:100%;padding:11px 13px;border:1.5px solid #EEE;border-radius:11px;font-size:14px;font-weight:600;font-family:inherit;color:#1A1A2E;background:#FAFAFA;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:#E8650A;background:#fff}
+.form-select{width:100%;padding:11px 13px;border:1.5px solid #EEE;border-radius:11px;font-size:14px;font-weight:600;font-family:inherit;color:#1A1A2E;background:#FAFAFA;outline:none;-webkit-appearance:none}
+.form-select:focus{border-color:#E8650A}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:6px}
+.emoji-opt{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;background:#F7F4EF;border:2px solid transparent}
+.emoji-opt.sel{border-color:#E8650A;background:#FFF0E6}
+.btn-add{width:100%;background:#E8650A;color:#fff;border:none;border-radius:13px;padding:14px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;margin-top:6px}
+.btn-add:active{background:#C94F06}
+.btn-save{width:100%;background:#1D9E75;color:#fff;border:none;border-radius:13px;padding:14px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;margin-top:6px}
+.btn-save:active{background:#0F6E56}
+
+/* PROVIDER LIST IN ADMIN */
+.adm-prov{background:#fff;border-radius:14px;padding:13px;margin-bottom:9px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;gap:10px;align-items:center}
+.adm-pav{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.adm-pn{font-size:13px;font-weight:800;color:#1A1A2E}
+.adm-ps{font-size:11px;color:#E8650A;font-weight:700}
+.adm-pp{font-size:11px;color:#666;font-weight:700;margin-top:2px}
+.adm-actions{display:flex;gap:6px;margin-left:auto;flex-shrink:0}
+.edit-btn{width:34px;height:34px;border-radius:9px;background:#EEF4FF;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px}
+.del-btn{width:34px;height:34px;border-radius:9px;background:#FFF0F0;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px}
+.del-btn:active{background:#FFD5D5}
+.edit-btn:active{background:#D5E3FF}
+
+/* CALL / WA QUICK BTNS IN ADMIN */
+.qb-row{display:flex;gap:6px;margin-top:7px}
+.qb-wa{flex:1;background:#E8FFF2;color:#2ECC71;border:1.5px solid #2ECC71;border-radius:9px;padding:7px;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;text-align:center}
+.qb-call{flex:1;background:#FFF3EE;color:#E8650A;border:1.5px solid #E8650A;border-radius:9px;padding:7px;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;text-align:center}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:40px 20px;color:#BBB}
+.empty-icon{font-size:50px;margin-bottom:12px}
+.empty-t{font-size:15px;font-weight:800;color:#999;margin-bottom:5px}
+.empty-s{font-size:12px;font-weight:600}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:#1A1A2E;color:#fff;padding:11px 20px;border-radius:99px;font-size:13px;font-weight:700;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:#F7F4EF;border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:90dvh;overflow-y:auto;padding:20px 16px env(safe-area-inset-bottom,30px)}
+.modal::-webkit-scrollbar{display:none}
+.modal-handle{width:40px;height:4px;background:#DDD;border-radius:99px;margin:0 auto 18px}
+.modal-title{font-size:18px;font-weight:800;color:#1A1A2E;margin-bottom:16px}
+
+/* STAR RATING INPUT */
+.star-row{display:flex;gap:8px;margin-top:6px}
+.star-inp{font-size:26px;cursor:pointer;opacity:.3;transition:opacity .15s}
+.star-inp.on{opacity:1}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ══════ HOME ══════ -->
+  <div class="screen" id="s-home">
+    <div class="home-hdr">
+      <div class="hdr-top">
+        <div>
+          <div class="loc"><div class="loc-dot"></div><span class="loc-txt">Indore, Madhya Pradesh</span></div>
+          <div class="greeting">Namasthe! <em>Meeru</em> 👋</div>
+          <div class="sub-g">Mee area lo emi kavali today?</div>
+        </div>
+        <div class="notif">🔔</div>
+      </div>
+      <div class="srch" onclick="go('s-cats')">
+        <span>🔍</span><span class="srch-ph">Service ni search cheyyandi...</span><span>⚙️</span>
+      </div>
+    </div>
+    <div class="scroll" style="padding-bottom:76px">
+      <div class="promo">
+        <div><div class="promo-t">Worker? Register Cheyandi!</div><div class="promo-s">1st month listing free</div></div>
+        <div class="promo-b">FREE</div>
+      </div>
+      <div class="sec"><span class="sec-t">Services</span><button class="see-all" onclick="go('s-cats')">Anni Chudandi →</button></div>
+      <div class="cg" id="home-cats">
+      <div class="ci" onclick="openCat('health')">
+        <div class="ci-icon" style="background:#FFF0E6">🏥</div>
+        <span class="ci-lbl">Lab / Nurse</span>
+      </div>
+      <div class="ci" onclick="openCat('build')">
+        <div class="ci-icon" style="background:#E6FFEF">🏗️</div>
+        <span class="ci-lbl">Building Work</span>
+      </div>
+      <div class="ci" onclick="openCat('net')">
+        <div class="ci-icon" style="background:#E6FFF9">📶</div>
+        <span class="ci-lbl">Internet Services</span>
+      </div>
+      <div class="ci" onclick="openCat('car')">
+        <div class="ci-icon" style="background:#FFF0E6">🚗</div>
+        <span class="ci-lbl">Car Rental</span>
+      </div></div>
+      <div class="sec" style="margin-top:20px"><span class="sec-t">📍 Mee Daggara Unnaru</span></div>
+      <div class="pl" id="home-provs"><div class="pc" onclick="openProv('p17779603606116mil')">
+    <div class="pav" style="background:#FFF0E6">🧪</div>
+    <div style="flex:1;min-width:0">
+      <div class="pn">K Suresh Kumar</div>
+      <div class="ps">Lab technician</div>
+      <div class="pm">
+        <div class="adot"></div>
+        <span class="rt">★ 4</span>
+        <span class="ds">1.0 km</span>
+      </div>
+    </div>
+    <button class="bk" onclick="event.stopPropagation();openProv('p17779603606116mil')">Book</button>
+  </div><div class="pc" onclick="openProv('p1777960421986bk8w')">
+    <div class="pav" style="background:#FFF0E6">🚗</div>
+    <div style="flex:1;min-width:0">
+      <div class="pn">Shankar dasari</div>
+      <div class="ps">Car rental</div>
+      <div class="pm">
+        <div class="adot"></div>
+        <span class="rt">★ 4</span>
+        <span class="ds">1.0 km</span>
+      </div>
+    </div>
+    <button class="bk" onclick="event.stopPropagation();openProv('p1777960421986bk8w')">Book</button>
+  </div><div class="pc" onclick="openProv('p1777960478784ghd9')">
+    <div class="pav" style="background:#E6FFEF">🧱</div>
+    <div style="flex:1;min-width:0">
+      <div class="pn">Sravan</div>
+      <div class="ps">Building related works</div>
+      <div class="pm">
+        <div class="adot"></div>
+        <span class="rt">★ 4</span>
+        <span class="ds">1.0 km</span>
+      </div>
+    </div>
+    <button class="bk" onclick="event.stopPropagation();openProv('p1777960478784ghd9')">Book</button>
+  </div><div class="pc" onclick="openProv('p17779605364668okv')">
+    <div class="pav" style="background:#E6FFF9">🌐</div>
+    <div style="flex:1;min-width:0">
+      <div class="pn">Thirupathi Chinthala</div>
+      <div class="ps">Internet works,bill payments</div>
+      <div class="pm">
+        <div class="adot"></div>
+        <span class="rt">★ 4</span>
+        <span class="ds">1.0 km</span>
+      </div>
+    </div>
+    <button class="bk" onclick="event.stopPropagation();openProv('p17779605364668okv')">Book</button>
+  </div></div>
+      <div style="height:12px"></div>
+    </div>
+  </div>
+
+  <!-- ══════ ALL CATEGORIES ══════ -->
+  <div class="screen" id="s-cats">
+    <div class="sh">
+      <button class="bk2" onclick="go('s-home')">←</button>
+      <div><div class="sh-t">Anni Services</div><div class="sh-s" id="cats-sub">4 categories available</div></div>
+    </div>
+    <div class="chips" id="chips-row"><button class="chip on">Anni</button><button class="chip">Health</button><button class="chip">Transport</button><button class="chip">Home</button><button class="chip">Finance</button><button class="chip">Food</button></div>
+    <div class="scroll" style="padding-bottom:76px">
+      <div class="acg" id="all-cat-grid"><div class="acc" onclick="openCat('health')">
+      <div class="aci" style="background:#FFF0E6">🏥</div>
+      <div class="acn">Lab / Nurse</div>
+      <div class="acc-cnt">1 provider</div>
+    </div><div class="acc" onclick="openCat('auto')">
+      <div class="aci" style="background:#E6F3FF">🛺</div>
+      <div class="acn">Auto Booking</div>
+      <div class="acc-cnt">0 providers</div>
+    </div><div class="acc" onclick="openCat('build')">
+      <div class="aci" style="background:#E6FFEF">🏗️</div>
+      <div class="acn">Building Work</div>
+      <div class="acc-cnt">1 provider</div>
+    </div><div class="acc" onclick="openCat('paint')">
+      <div class="aci" style="background:#FFF5E6">🎨</div>
+      <div class="acn">Painting</div>
+      <div class="acc-cnt">0 providers</div>
+    </div><div class="acc" onclick="openCat('theatre')">
+      <div class="aci" style="background:#FFEEF6">🎭</div>
+      <div class="acn">Theatre Staff</div>
+      <div class="acc-cnt">0 providers</div>
+    </div><div class="acc" onclick="openCat('bank')">
+      <div class="aci" style="background:#E6F7FF">🏦</div>
+      <div class="acn">Bank / Loan Help</div>
+      <div class="acc-cnt">0 providers</div>
+    </div><div class="acc" onclick="openCat('fruit')">
+      <div class="aci" style="background:#EFFFEE">🍎</div>
+      <div class="acn">Fruits Seller</div>
+      <div class="acc-cnt">0 providers</div>
+    </div><div class="acc" onclick="openCat('bike')">
+      <div class="aci" style="background:#F0E6FF">🔋</div>
+      <div class="acn">Bike / Battery</div>
+      <div class="acc-cnt">0 providers</div>
+    </div><div class="acc" onclick="openCat('net')">
+      <div class="aci" style="background:#E6FFF9">📶</div>
+      <div class="acn">Internet Services</div>
+      <div class="acc-cnt">1 provider</div>
+    </div><div class="acc" onclick="openCat('reg')">
+      <div class="aci" style="background:#FFFBE6">📝</div>
+      <div class="acn">Registration Help</div>
+      <div class="acc-cnt">0 providers</div>
+    </div><div class="acc" onclick="openCat('hotel')">
+      <div class="aci" style="background:#FFEEF6">🏨</div>
+      <div class="acn">Hotel / Stay</div>
+      <div class="acc-cnt">0 providers</div>
+    </div><div class="acc" onclick="openCat('car')">
+      <div class="aci" style="background:#FFF0E6">🚗</div>
+      <div class="acn">Car Rental</div>
+      <div class="acc-cnt">1 provider</div>
+    </div></div>
+    </div>
+  </div>
+
+  <!-- ══════ CATEGORY DETAIL ══════ -->
+  <div class="screen" id="s-cat">
+    <div class="sh">
+      <button class="bk2" onclick="go('s-cats')">←</button>
+      <div><div class="sh-t" id="cat-title"></div><div class="sh-s" id="cat-sub"></div></div>
+    </div>
+    <div class="scroll" style="padding-bottom:76px">
+      <div class="pl" style="margin-top:13px" id="cat-plist"></div>
+      <div style="height:10px"></div>
+    </div>
+  </div>
+
+  <!-- ══════ PROVIDER PROFILE ══════ -->
+  <div class="screen" id="s-prov">
+    <div class="bh">
+      <div class="bh-row">
+        <button class="bk2" onclick="goBack()">←</button>
+        <span class="bh-lbl">Provider Profile</span>
+      </div>
+    </div>
+    <div class="scroll">
+      <div class="prfc">
+        <div class="bar">
+          <div class="ba" id="p-av"></div>
+          <div>
+            <div class="bn" id="p-nm"></div>
+            <div class="bsk" id="p-sk"></div>
+            <div class="bm"><span id="p-rt"></span><span id="p-ds"></span></div>
+          </div>
+        </div>
+        <div class="sr">
+          <div class="sb"><div class="sn" id="p-jb"></div><div class="sl">Jobs Done</div></div>
+          <div class="sb"><div class="sn" id="p-rt2"></div><div class="sl">Rating</div></div>
+          <div class="sb"><div class="sn" style="color:#2ECC71">●</div><div class="sl">Available</div></div>
+        </div>
+        <div class="ctb">
+          <div class="ctl">Contact Info</div>
+          <div class="ctp" id="p-ph"></div>
+          <div class="ctw">💬 WhatsApp Available</div>
+        </div>
+      </div>
+      <div class="rvc">
+        <div class="rvt">Customer Reviews</div>
+        <div id="p-revs"></div>
+      </div>
+      <div style="height:10px"></div>
+    </div>
+    <div class="bta">
+      <button class="wab" id="wa-btn">💬 WhatsApp</button>
+      <button class="cab" id="ca-btn">📞 Call Now</button>
+    </div>
+  </div>
+
+  <!-- ══════ ADMIN PANEL ══════ -->
+  <div class="screen active" id="s-admin">
+    <div class="adm-hdr">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div>
+          <div class="adm-title">⚙️ Admin Panel</div>
+          <div class="adm-sub">Providers ni manage cheyyandi</div>
+        </div>
+        <button class="bk2" style="background:rgba(255,255,255,.15);color:#FFD87A" onclick="go('s-home');setNav('nav-home')">✕</button>
+      </div>
+      <button onclick="exportApp()" style="width:100%;background:#FFD87A;color:#1A1A2E;border:none;border-radius:13px;padding:13px;font-size:14px;font-weight:900;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+        📤 Share Cheyyadaniki App Export Cheyyandi
+      </button>
+      <div style="color:rgba(255,255,255,.55);font-size:11px;font-weight:600;text-align:center;margin-top:8px">Meeru add chesina providers tho new file download avutundi → share cheyyandi</div>
+    </div>
+    <div class="adm-tabs">
+      <button class="adm-tab on" onclick="showAdmTab(0,this)">➕ Add Provider</button>
+      <button class="adm-tab" onclick="showAdmTab(1,this)">📋 All Providers</button>
+      <button class="adm-tab" onclick="showAdmTab(2,this)">📂 Categories</button>
+    </div>
+    <div class="adm-body" id="adm-body">
+    <div class="form-card">
+      <div class="form-title">👤 Kotha Provider Add Cheyyandi</div>
+
+      <div class="form-row">
+        <label class="form-label">Emoji / Icon</label>
+        <div class="emoji-grid" id="emoji-grid">
+          <div class="emoji-opt" onclick="pickEmoji('🏥',this)">🏥</div><div class="emoji-opt" onclick="pickEmoji('🧪',this)">🧪</div><div class="emoji-opt" onclick="pickEmoji('💉',this)">💉</div><div class="emoji-opt" onclick="pickEmoji('🛺',this)">🛺</div><div class="emoji-opt" onclick="pickEmoji('🚗',this)">🚗</div><div class="emoji-opt" onclick="pickEmoji('🏍️',this)">🏍️</div><div class="emoji-opt" onclick="pickEmoji('🏗️',this)">🏗️</div><div class="emoji-opt" onclick="pickEmoji('🔨',this)">🔨</div><div class="emoji-opt" onclick="pickEmoji('🎨',this)">🎨</div><div class="emoji-opt" onclick="pickEmoji('🖌️',this)">🖌️</div><div class="emoji-opt" onclick="pickEmoji('🎭',this)">🎭</div><div class="emoji-opt" onclick="pickEmoji('🏦',this)">🏦</div><div class="emoji-opt" onclick="pickEmoji('📄',this)">📄</div><div class="emoji-opt" onclick="pickEmoji('🍎',this)">🍎</div><div class="emoji-opt" onclick="pickEmoji('🍇',this)">🍇</div><div class="emoji-opt" onclick="pickEmoji('🥦',this)">🥦</div><div class="emoji-opt" onclick="pickEmoji('🔋',this)">🔋</div><div class="emoji-opt" onclick="pickEmoji('⚡',this)">⚡</div><div class="emoji-opt" onclick="pickEmoji('📶',this)">📶</div><div class="emoji-opt" onclick="pickEmoji('🌐',this)">🌐</div><div class="emoji-opt" onclick="pickEmoji('📝',this)">📝</div><div class="emoji-opt" onclick="pickEmoji('📋',this)">📋</div><div class="emoji-opt" onclick="pickEmoji('🏨',this)">🏨</div><div class="emoji-opt" onclick="pickEmoji('🛏️',this)">🛏️</div><div class="emoji-opt" onclick="pickEmoji('👨‍⚕️',this)">👨‍⚕️</div><div class="emoji-opt" onclick="pickEmoji('👩‍⚕️',this)">👩‍⚕️</div><div class="emoji-opt sel" onclick="pickEmoji('🔧',this)">🔧</div><div class="emoji-opt" onclick="pickEmoji('🪛',this)">🪛</div><div class="emoji-opt" onclick="pickEmoji('🧰',this)">🧰</div><div class="emoji-opt" onclick="pickEmoji('🚰',this)">🚰</div><div class="emoji-opt" onclick="pickEmoji('🪟',this)">🪟</div><div class="emoji-opt" onclick="pickEmoji('🚪',this)">🚪</div><div class="emoji-opt" onclick="pickEmoji('🧱',this)">🧱</div><div class="emoji-opt" onclick="pickEmoji('💡',this)">💡</div><div class="emoji-opt" onclick="pickEmoji('📦',this)">📦</div><div class="emoji-opt" onclick="pickEmoji('🎪',this)">🎪</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Provider Name *</label>
+        <input class="form-input" id="f-name" placeholder="Example: Raju Mechanic">
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Skill / Service *</label>
+        <input class="form-input" id="f-skill" placeholder="Example: Bike &amp; Battery Expert">
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Phone Number *</label>
+        <input class="form-input" id="f-phone" type="tel" placeholder="9876543210" maxlength="10">
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Category *</label>
+        <select class="form-select" id="f-cat">
+          <option value="health">🏥 Lab / Nurse</option><option value="auto">🛺 Auto Booking</option><option value="build">🏗️ Building Work</option><option value="paint">🎨 Painting</option><option value="theatre">🎭 Theatre Staff</option><option value="bank">🏦 Bank / Loan Help</option><option value="fruit">🍎 Fruits Seller</option><option value="bike">🔋 Bike / Battery</option><option value="net">📶 Internet Services</option><option value="reg">📝 Registration Help</option><option value="hotel">🏨 Hotel / Stay</option><option value="car">🚗 Car Rental</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Distance (optional)</label>
+        <input class="form-input" id="f-dist" placeholder="Example: 0.5 km">
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Jobs Done (optional)</label>
+        <input class="form-input" id="f-jobs" type="number" placeholder="50">
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Rating</label>
+        <div class="star-row" id="star-row">
+          <span class="star-inp on" onclick="setRating(1)" data-v="1">★</span><span class="star-inp on" onclick="setRating(2)" data-v="2">★</span><span class="star-inp on" onclick="setRating(3)" data-v="3">★</span><span class="star-inp on" onclick="setRating(4)" data-v="4">★</span><span class="star-inp" onclick="setRating(5)" data-v="5">★</span>
+        </div>
+      </div>
+
+      <button class="btn-add" onclick="addProvider()">➕ Provider Add Cheyyandi</button>
+    </div></div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bn-bar">
+    <div class="ni" id="nav-home" onclick="go('s-home');setNav('nav-home')">
+      <span class="ni-ic">🏠</span><span class="ni-lb">Home</span><div class="ni-dot"></div>
+    </div>
+    <div class="ni" id="nav-explore" onclick="go('s-cats');setNav('nav-explore')">
+      <span class="ni-ic">🔍</span><span class="ni-lb">Explore</span><div class="ni-dot"></div>
+    </div>
+    <div class="ni" id="nav-book">
+      <span class="ni-ic">📋</span><span class="ni-lb">Bookings</span><div class="ni-dot"></div>
+    </div>
+    <div class="ni on" id="nav-admin" onclick="go('s-admin');setNav('nav-admin');renderAdminTab()">
+      <span class="ni-ic">⚙️</span><span class="ni-lb">Admin</span><div class="ni-dot"></div>
+    </div>
+  </div>
+
+  <!-- EDIT MODAL -->
+  <div class="modal-overlay" id="edit-modal">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-title">✏️ Provider Edit Cheyyandi</div>
+      <div id="edit-form-body"></div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  DATA — localStorage tho save avutundi
+// ══════════════════════════════════════════════════════
+const CAT_DEFS = [
+  {key:'health',title:'Lab / Nurse',sub:'Home visit & lab',emoji:'🏥',bg:'#FFF0E6'},
+  {key:'auto',title:'Auto Booking',sub:'Autos near you',emoji:'🛺',bg:'#E6F3FF'},
+  {key:'build',title:'Building Work',sub:'Construction & civil',emoji:'🏗️',bg:'#E6FFEF'},
+  {key:'paint',title:'Painting',sub:'Interior & exterior',emoji:'🎨',bg:'#FFF5E6'},
+  {key:'theatre',title:'Theatre Staff',sub:'Event & cinema staffing',emoji:'🎭',bg:'#FFEEF6'},
+  {key:'bank',title:'Bank / Loan Help',sub:'Loan support',emoji:'🏦',bg:'#E6F7FF'},
+  {key:'fruit',title:'Fruits Seller',sub:'Fresh fruits',emoji:'🍎',bg:'#EFFFEE'},
+  {key:'bike',title:'Bike / Battery',sub:'Bike repairs',emoji:'🔋',bg:'#F0E6FF'},
+  {key:'net',title:'Internet Services',sub:'Broadband & WiFi',emoji:'📶',bg:'#E6FFF9'},
+  {key:'reg',title:'Registration Help',sub:'Documents & govt',emoji:'📝',bg:'#FFFBE6'},
+  {key:'hotel',title:'Hotel / Stay',sub:'Local stays & food',emoji:'🏨',bg:'#FFEEF6'},
+  {key:'car',title:'Car Rental',sub:'Daily & outstation',emoji:'🚗',bg:'#FFF0E6'},
+];
+
+const EMOJIS = ['🏥','🧪','💉','🛺','🚗','🏍️','🏗️','🔨','🎨','🖌️','🎭','🏦','📄','🍎','🍇','🥦','🔋','⚡','📶','🌐','📝','📋','🏨','🛏️','👨‍⚕️','👩‍⚕️','🔧','🪛','🧰','🚰','🪟','🚪','🧱','💡','📦','🎪'];
+
+const DEFAULT_PROVS = [
+  {
+    "id": "p17779603606116mil",
+    "name": "K Suresh Kumar",
+    "skill": "Lab technician",
+    "emoji": "🧪",
+    "cat": "health",
+    "phone": "9963962872",
+    "rating": 4,
+    "dist": "1.0 km",
+    "jobs": 0,
+    "reviews": []
+  },
+  {
+    "id": "p1777960421986bk8w",
+    "name": "Shankar dasari",
+    "skill": "Car rental",
+    "emoji": "🚗",
+    "cat": "car",
+    "phone": "8639374283",
+    "rating": 4,
+    "dist": "1.0 km",
+    "jobs": 0,
+    "reviews": []
+  },
+  {
+    "id": "p1777960478784ghd9",
+    "name": "Sravan",
+    "skill": "Building related works",
+    "emoji": "🧱",
+    "cat": "build",
+    "phone": "9963580392",
+    "rating": 4,
+    "dist": "1.0 km",
+    "jobs": 0,
+    "reviews": []
+  },
+  {
+    "id": "p17779605364668okv",
+    "name": "Thirupathi Chinthala",
+    "skill": "Internet works,bill payments",
+    "emoji": "🌐",
+    "cat": "net",
+    "phone": "7093968852",
+    "rating": 4,
+    "dist": "1.0 km",
+    "jobs": 0,
+    "reviews": []
+  }
+];
+
+// Load from localStorage
+function getProviders() {
+  try { const s = localStorage.getItem('ll_providers'); return s ? JSON.parse(s) : DEFAULT_PROVS; }
+  catch(e) { return DEFAULT_PROVS; }
+}
+function saveProviders(arr) { localStorage.setItem('ll_providers', JSON.stringify(arr)); }
+
+// ══════════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════════
+let prevScreen = 's-home';
+let curCatKey = null;
+let curProvId = null;
+let curAdmTab = 0;
+
+function go(id) {
+  const cur = document.querySelector('.screen.active');
+  if (cur) prevScreen = cur.id;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  // re-render dynamic screens
+  if (id === 's-home') renderHome();
+  if (id === 's-cats') renderAllCats();
+}
+function goBack() {
+  if (document.getElementById('s-prov').classList.contains('active')) {
+    go(curCatKey ? 's-cat' : 's-home');
+  } else go('s-home');
+}
+function setNav(id) {
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('on');
+}
+
+// ══════════════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════════════
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ══════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════
+function catDef(key) { return CAT_DEFS.find(c => c.key === key) || CAT_DEFS[0]; }
+function stars(r) { return '★'.repeat(Math.round(r)) + '☆'.repeat(5 - Math.round(r)); }
+function uid() { return 'p' + Date.now() + Math.random().toString(36).slice(2,6); }
+
+function provCardHTML(p, clickFn) {
+  const c = catDef(p.cat);
+  return `<div class="pc" onclick="${clickFn}">
+    <div class="pav" style="background:${c.bg}">${p.emoji}</div>
+    <div style="flex:1;min-width:0">
+      <div class="pn">${p.name}</div>
+      <div class="ps">${p.skill}</div>
+      <div class="pm">
+        <div class="adot"></div>
+        <span class="rt">★ ${p.rating}</span>
+        <span class="ds">${p.dist}</span>
+      </div>
+    </div>
+    <button class="bk" onclick="event.stopPropagation();openProv('${p.id}')">Book</button>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  HOME SCREEN
+// ══════════════════════════════════════════════════════
+function renderHome() {
+  const provs = getProviders();
+  // Category grid (top 8 cats that have providers)
+  const catsWithProvs = CAT_DEFS.filter(c => provs.some(p => p.cat === c.key));
+  document.getElementById('home-cats').innerHTML =
+    catsWithProvs.slice(0,8).map(c => `
+      <div class="ci" onclick="openCat('${c.key}')">
+        <div class="ci-icon" style="background:${c.bg}">${c.emoji}</div>
+        <span class="ci-lbl">${c.title}</span>
+      </div>`).join('');
+
+  // Nearby: top rated providers
+  const top = [...provs].sort((a,b) => b.rating - a.rating).slice(0,5);
+  document.getElementById('home-provs').innerHTML =
+    top.map(p => provCardHTML(p, `openProv('${p.id}')`)).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  ALL CATEGORIES SCREEN
+// ══════════════════════════════════════════════════════
+function renderAllCats() {
+  const provs = getProviders();
+  document.getElementById('chips-row').innerHTML =
+    ['Anni','Health','Transport','Home','Finance','Food'].map((l,i) =>
+      `<button class="chip${i===0?' on':''}">${l}</button>`).join('');
+
+  const active = CAT_DEFS.filter(c => provs.some(p => p.cat === c.key));
+  document.getElementById('cats-sub').textContent = `${active.length} categories available`;
+  document.getElementById('all-cat-grid').innerHTML = CAT_DEFS.map(c => {
+    const cnt = provs.filter(p => p.cat === c.key).length;
+    return `<div class="acc" onclick="openCat('${c.key}')">
+      <div class="aci" style="background:${c.bg}">${c.emoji}</div>
+      <div class="acn">${c.title}</div>
+      <div class="acc-cnt">${cnt} provider${cnt!==1?'s':''}</div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  OPEN CATEGORY
+// ══════════════════════════════════════════════════════
+function openCat(key) {
+  curCatKey = key;
+  const c = catDef(key);
+  const provs = getProviders().filter(p => p.cat === key);
+  document.getElementById('cat-title').textContent = c.title;
+  document.getElementById('cat-sub').textContent = `${provs.length} provider${provs.length!==1?'s':''} available`;
+  document.getElementById('cat-plist').innerHTML = provs.length
+    ? provs.map(p => provCardHTML(p, `openProv('${p.id}')`)).join('')
+    : `<div class="empty"><div class="empty-icon">${c.emoji}</div><div class="empty-t">Inka providers leeru</div><div class="empty-s">Admin panel lo add cheyyandi</div></div>`;
+  go('s-cat');
+}
+
+// ══════════════════════════════════════════════════════
+//  OPEN PROVIDER PROFILE
+// ══════════════════════════════════════════════════════
+function openProv(id) {
+  curProvId = id;
+  const p = getProviders().find(x => x.id === id);
+  if (!p) return;
+  const c = catDef(p.cat);
+
+  document.getElementById('p-av').style.background = c.bg;
+  document.getElementById('p-av').textContent = p.emoji;
+  document.getElementById('p-nm').textContent = p.name;
+  document.getElementById('p-sk').textContent = p.skill;
+  document.getElementById('p-rt').textContent = `★ ${p.rating}`;
+  document.getElementById('p-ds').textContent = p.dist;
+  document.getElementById('p-jb').textContent = `${p.jobs}+`;
+  document.getElementById('p-rt2').textContent = p.rating;
+  document.getElementById('p-ph').textContent = `📞 +91 ${p.phone}`;
+
+  document.getElementById('p-revs').innerHTML = (p.reviews||[]).length
+    ? (p.reviews||[]).map(r => `
+        <div class="rvi">
+          <div class="rva" style="background:${c.bg}">${r.e}</div>
+          <div>
+            <div class="rvn">${r.n} <span class="rvs">${stars(r.r)}</span></div>
+            <div class="rvx">${r.t}</div>
+          </div>
+        </div>`).join('')
+    : '<div style="color:#BBB;font-size:13px;font-weight:700;text-align:center;padding:10px 0">Inka reviews leeru</div>';
+
+  // WhatsApp integration
+  document.getElementById('wa-btn').onclick = () => {
+    const msg = encodeURIComponent(
+      `Namasthe! LocalLink app nundi contact chestaanu.\n` +
+      `Provider: ${p.name}\nService: ${p.skill}\n` +
+      `Meeru available ga unnara? Price cheppagalara?`
+    );
+    const url = `https://wa.me/91${p.phone.replace(/\D/g,'')}?text=${msg}`;
+    window.open(url, '_blank');
+  };
+
+  // Call integration
+  document.getElementById('ca-btn').onclick = () => {
+    window.location.href = `tel:+91${p.phone.replace(/\D/g,'')}`;
+  };
+
+  go('s-prov');
+}
+
+// ══════════════════════════════════════════════════════
+//  ADMIN — TAB SWITCHING
+// ══════════════════════════════════════════════════════
+function showAdmTab(idx, el) {
+  curAdmTab = idx;
+  document.querySelectorAll('.adm-tab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  renderAdminTab();
+}
+function renderAdminTab() {
+  if (curAdmTab === 0) renderAddForm();
+  else if (curAdmTab === 1) renderProviderList();
+  else renderCatList();
+}
+
+// ══════════════════════════════════════════════════════
+//  ADMIN TAB 0 — ADD PROVIDER FORM
+// ══════════════════════════════════════════════════════
+let selEmoji = '🔧';
+let newRating = 4;
+
+function renderAddForm() {
+  selEmoji = '🔧';
+  newRating = 4;
+  document.getElementById('adm-body').innerHTML = `
+    <div class="form-card">
+      <div class="form-title">👤 Kotha Provider Add Cheyyandi</div>
+
+      <div class="form-row">
+        <label class="form-label">Emoji / Icon</label>
+        <div class="emoji-grid" id="emoji-grid">
+          ${EMOJIS.map(e => `<div class="emoji-opt${e===selEmoji?' sel':''}" onclick="pickEmoji('${e}',this)">${e}</div>`).join('')}
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Provider Name *</label>
+        <input class="form-input" id="f-name" placeholder="Example: Raju Mechanic" />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Skill / Service *</label>
+        <input class="form-input" id="f-skill" placeholder="Example: Bike & Battery Expert" />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Phone Number *</label>
+        <input class="form-input" id="f-phone" type="tel" placeholder="9876543210" maxlength="10" />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Category *</label>
+        <select class="form-select" id="f-cat">
+          ${CAT_DEFS.map(c => `<option value="${c.key}">${c.emoji} ${c.title}</option>`).join('')}
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Distance (optional)</label>
+        <input class="form-input" id="f-dist" placeholder="Example: 0.5 km" />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Jobs Done (optional)</label>
+        <input class="form-input" id="f-jobs" type="number" placeholder="50" />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Rating</label>
+        <div class="star-row" id="star-row">
+          ${[1,2,3,4,5].map(i => `<span class="star-inp${i<=newRating?' on':''}" onclick="setRating(${i})" data-v="${i}">★</span>`).join('')}
+        </div>
+      </div>
+
+      <button class="btn-add" onclick="addProvider()">➕ Provider Add Cheyyandi</button>
+    </div>`;
+}
+
+function pickEmoji(e, el) {
+  selEmoji = e;
+  document.querySelectorAll('.emoji-opt').forEach(x => x.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function setRating(v) {
+  newRating = v;
+  document.querySelectorAll('#star-row .star-inp').forEach(s => {
+    s.classList.toggle('on', parseInt(s.dataset.v) <= v);
+  });
+}
+
+function addProvider() {
+  const name = document.getElementById('f-name').value.trim();
+  const skill = document.getElementById('f-skill').value.trim();
+  const phone = document.getElementById('f-phone').value.trim().replace(/\D/g,'');
+  const cat = document.getElementById('f-cat').value;
+  const dist = document.getElementById('f-dist').value.trim() || '1.0 km';
+  const jobs = parseInt(document.getElementById('f-jobs').value) || 0;
+
+  if (!name) { toast('❗ Name enter cheyyandi'); return; }
+  if (!skill) { toast('❗ Skill enter cheyyandi'); return; }
+  if (!phone || phone.length < 10) { toast('❗ Valid phone number enter cheyyandi'); return; }
+
+  const provs = getProviders();
+  provs.push({ id: uid(), name, skill, emoji: selEmoji, cat, phone, rating: newRating, dist, jobs, reviews: [] });
+  saveProviders(provs);
+  toast(`✅ ${name} add ayyindi!`);
+  renderAddForm();
+}
+
+// ══════════════════════════════════════════════════════
+//  ADMIN TAB 1 — ALL PROVIDERS LIST
+// ══════════════════════════════════════════════════════
+function renderProviderList() {
+  const provs = getProviders();
+  if (!provs.length) {
+    document.getElementById('adm-body').innerHTML = `
+      <div class="empty"><div class="empty-icon">👥</div>
+      <div class="empty-t">Providers leeru</div>
+      <div class="empty-s">Add Provider tab lo add cheyyandi</div></div>`;
+    return;
+  }
+  document.getElementById('adm-body').innerHTML = provs.map(p => {
+    const c = catDef(p.cat);
+    return `<div class="adm-prov" id="apc-${p.id}">
+      <div class="adm-pav" style="background:${c.bg}">${p.emoji}</div>
+      <div style="flex:1;min-width:0">
+        <div class="adm-pn">${p.name}</div>
+        <div class="adm-ps">${p.skill} · ${c.emoji} ${c.title}</div>
+        <div class="adm-pp">📞 ${p.phone} · ★${p.rating} · ${p.dist}</div>
+        <div class="qb-row">
+          <button class="qb-wa" onclick="quickWA('${p.id}')">💬 WhatsApp</button>
+          <button class="qb-call" onclick="quickCall('${p.id}')">📞 Call</button>
+        </div>
+      </div>
+      <div class="adm-actions">
+        <button class="edit-btn" onclick="openEditModal('${p.id}')">✏️</button>
+        <button class="del-btn" onclick="deleteProvider('${p.id}','${p.name}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function quickWA(id) {
+  const p = getProviders().find(x => x.id === id);
+  if (!p) return;
+  const msg = encodeURIComponent(`Namasthe ${p.name}! LocalLink app nundi meeru contact chestaanu. Meeru available ga unnara?`);
+  window.open(`https://wa.me/91${p.phone.replace(/\D/g,'')}?text=${msg}`, '_blank');
+}
+function quickCall(id) {
+  const p = getProviders().find(x => x.id === id);
+  if (!p) return;
+  window.location.href = `tel:+91${p.phone.replace(/\D/g,'')}`;
+}
+
+function deleteProvider(id, name) {
+  if (!confirm(`"${name}" ni delete cheyyalantara?`)) return;
+  const provs = getProviders().filter(p => p.id !== id);
+  saveProviders(provs);
+  toast(`🗑️ ${name} delete ayyindi`);
+  renderProviderList();
+}
+
+// ══════════════════════════════════════════════════════
+//  EDIT MODAL
+// ══════════════════════════════════════════════════════
+let editEmoji = '';
+let editRating = 4;
+let editId = '';
+
+function openEditModal(id) {
+  editId = id;
+  const p = getProviders().find(x => x.id === id);
+  if (!p) return;
+  editEmoji = p.emoji;
+  editRating = p.rating;
+
+  document.getElementById('edit-form-body').innerHTML = `
+    <div class="form-row">
+      <label class="form-label">Emoji</label>
+      <div class="emoji-grid" id="edit-emoji-grid">
+        ${EMOJIS.map(e => `<div class="emoji-opt${e===editEmoji?' sel':''}" onclick="pickEditEmoji('${e}',this)">${e}</div>`).join('')}
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Provider Name</label>
+      <input class="form-input" id="e-name" value="${p.name}" />
+    </div>
+    <div class="form-row">
+      <label class="form-label">Skill / Service</label>
+      <input class="form-input" id="e-skill" value="${p.skill}" />
+    </div>
+    <div class="form-row">
+      <label class="form-label">Phone Number</label>
+      <input class="form-input" id="e-phone" type="tel" value="${p.phone}" maxlength="10" />
+    </div>
+    <div class="form-row">
+      <label class="form-label">Category</label>
+      <select class="form-select" id="e-cat">
+        ${CAT_DEFS.map(c => `<option value="${c.key}"${c.key===p.cat?' selected':''}>${c.emoji} ${c.title}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Distance</label>
+      <input class="form-input" id="e-dist" value="${p.dist}" />
+    </div>
+    <div class="form-row">
+      <label class="form-label">Jobs Done</label>
+      <input class="form-input" id="e-jobs" type="number" value="${p.jobs}" />
+    </div>
+    <div class="form-row">
+      <label class="form-label">Rating</label>
+      <div class="star-row" id="edit-star-row">
+        ${[1,2,3,4,5].map(i => `<span class="star-inp${i<=editRating?' on':''}" onclick="setEditRating(${i})" data-v="${i}">★</span>`).join('')}
+      </div>
+    </div>
+    <button class="btn-save" onclick="saveEdit()">💾 Changes Save Cheyyandi</button>
+    <button onclick="closeModal()" style="width:100%;padding:13px;border:none;background:transparent;color:#999;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;margin-top:8px">Cancel</button>
+  `;
+  document.getElementById('edit-modal').classList.add('show');
+}
+
+function pickEditEmoji(e, el) {
+  editEmoji = e;
+  document.querySelectorAll('#edit-emoji-grid .emoji-opt').forEach(x => x.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function setEditRating(v) {
+  editRating = v;
+  document.querySelectorAll('#edit-star-row .star-inp').forEach(s => {
+    s.classList.toggle('on', parseInt(s.dataset.v) <= v);
+  });
+}
+function closeModal() { document.getElementById('edit-modal').classList.remove('show'); }
+
+function saveEdit() {
+  const name = document.getElementById('e-name').value.trim();
+  const phone = document.getElementById('e-phone').value.trim().replace(/\D/g,'');
+  if (!name || phone.length < 10) { toast('❗ Name & valid phone required'); return; }
+
+  const provs = getProviders();
+  const idx = provs.findIndex(p => p.id === editId);
+  if (idx < 0) return;
+  provs[idx] = {
+    ...provs[idx],
+    name, emoji: editEmoji,
+    skill: document.getElementById('e-skill').value.trim(),
+    phone,
+    cat: document.getElementById('e-cat').value,
+    dist: document.getElementById('e-dist').value.trim() || '1.0 km',
+    jobs: parseInt(document.getElementById('e-jobs').value) || 0,
+    rating: editRating,
+  };
+  saveProviders(provs);
+  closeModal();
+  toast(`✅ ${name} updated!`);
+  renderProviderList();
+}
+
+// ══════════════════════════════════════════════════════
+//  ADMIN TAB 2 — CATEGORIES SUMMARY
+// ══════════════════════════════════════════════════════
+function renderCatList() {
+  const provs = getProviders();
+  document.getElementById('adm-body').innerHTML = CAT_DEFS.map(c => {
+    const cp = provs.filter(p => p.cat === c.key);
+    return `<div class="form-card" style="padding:13px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:${cp.length?'10px':'0'}">
+        <div style="width:44px;height:44px;border-radius:13px;background:${c.bg};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${c.emoji}</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:800;color:#1A1A2E">${c.title}</div>
+          <div style="font-size:11px;color:#E8650A;font-weight:700">${cp.length} provider${cp.length!==1?'s':''}</div>
+        </div>
+      </div>
+      ${cp.map(p=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#F7F4EF;border-radius:10px;margin-bottom:6px">
+          <span style="font-size:18px">${p.emoji}</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:800;color:#1A1A2E">${p.name}</div>
+            <div style="font-size:11px;color:#666;font-weight:600">📞 ${p.phone}</div>
+          </div>
+          <button class="qb-wa" style="padding:5px 10px;font-size:10px" onclick="quickWA('${p.id}')">💬</button>
+          <button class="qb-call" style="padding:5px 10px;font-size:10px" onclick="quickCall('${p.id}')">📞</button>
+        </div>`).join('')}
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  EXPORT APP — current providers tho new HTML generate
+// ══════════════════════════════════════════════════════
+function exportApp() {
+  const provs = getProviders();
+  const provsJSON = JSON.stringify(provs, null, 2);
+
+  // Get current full HTML
+  let html = document.documentElement.outerHTML;
+
+  // Replace the DEFAULT_PROVS array with current data
+  html = html.replace(
+    /const DEFAULT_PROVS = \[[\s\S]*?\];/,
+    'const DEFAULT_PROVS = ' + provsJSON + ';'
+  );
+
+  // Also clear any localStorage reference so new users start fresh with exported data
+  html = html.replace(
+    "try { return JSON.parse(localStorage.getItem('ll_providers')) || DEFAULT_PROVS; }",
+    "try { const s = localStorage.getItem('ll_providers'); return s ? JSON.parse(s) : DEFAULT_PROVS; }"
+  );
+
+  // Create download
+  const blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'LocalLink_' + new Date().toLocaleDateString('en-IN').replace(/\//g,'-') + '.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  toast('✅ App exported! File share cheyyandi 🎉');
+}
+
+// ══════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════
+// Close modal on overlay click
+document.getElementById('edit-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+renderHome();
+renderAllCats();
+</script>
+
+
+</body></html>
